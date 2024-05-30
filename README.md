@@ -1,6 +1,6 @@
 # Prerequisites
 
-You need a GSM dongle "compatible" with Gammu : https://wammu.eu/phones/  
+You need a GSM dongle "compatible" with Gammu : https://wammu.eu/phones/
 Even if your dongle is not listed, it should works with.
 
 If you need specific gammu settings to be added, feel free to open a PR or an issue.
@@ -10,7 +10,14 @@ If you need specific gammu settings to be added, feel free to open a PR or an is
 ![Diagram](https://raw.githubusercontent.com/Domochip/sms2mqtt/master/diagram.svg)
 
 # How-to
-## Install
+## Build your own docker image
+```bash
+docker build -t custom_prefix/sms2mqtt .
+# Or, with buildx plugin
+docker buildx build -t custom_prefix/sms2mqtt .
+```
+
+## Run
 For Docker, run it by executing the following commmand:
 
 ```bash
@@ -70,15 +77,15 @@ services:
 
 ## Send
 
-The default {prefix} for topics is sms2mqtt.  
+The default {prefix} for topics is sms2mqtt.
 
-To send SMS: 
-1. Publish this payload to topic **sms2mqtt/send** :  
-`{"number":"+33612345678", "text":"This is a test message"}`  
-2. SMS is sent  
-3. A confirmation is sent back through MQTT to topic **sms2mqtt/sent** :  
-`{"result":"success", "datetime":"2021-01-23 13:00:00", "number":"+33612345678", "text":"This is a test message"}`  
-  
+To send SMS:
+1. Publish this payload to topic **sms2mqtt/send** :
+`{"number":"+33612345678", "text":"This is a test message"}`
+2. SMS is sent
+3. A confirmation is sent back through MQTT to topic **sms2mqtt/sent** :
+`{"result":"success", "datetime":"2021-01-23 13:00:00", "number":"+33612345678", "text":"This is a test message"}`
+
 - ✔️ SMS to multiple Numbers using semicolon (;) seperated list. A confirmation will be sent back for each numbers.
 - ✔️ very long messages (more than 160 char).
 - ✔️ unicode messages containing emoji like : `{"number":"+33612345678", "text":"It's working fine 👌"}`
@@ -86,33 +93,33 @@ To send SMS:
 
 ## Receive
 
-Received SMS are published to topic **sms2mqtt/received** like this :  
-`{"datetime":"2021-01-23 13:30:00", "number":"+31415926535", "text":"Hi, Be the Pi with you"}`  
+Received SMS are published to topic **sms2mqtt/received** like this :
+`{"datetime":"2021-01-23 13:30:00", "number":"+31415926535", "text":"Hi, Be the Pi with you"}`
 
 - ✔️ long SMS messages
 - ❌ any MMS
 
 ## Other topics
- - **sms2mqtt/connected**: Indicates connection status of the container (0 or 1)  
+ - **sms2mqtt/connected**: Indicates connection status of the container (0 or 1)
  E.g. `1`
 
-- **sms2mqtt/signal**: A signal quality payload is published when quality changes  
+- **sms2mqtt/signal**: A signal quality payload is published when quality changes
  E.g. `{"SignalStrength": -71, "SignalPercent": 63, "BitErrorRate": -1}`
 
 ### Additionnal topics (enabled using MOREINFO flag)
- - **sms2mqtt/battery**: A battery payload with status and charge is published when it changes  
+ - **sms2mqtt/battery**: A battery payload with status and charge is published when it changes
  E.g. `{"BatteryPercent": 100, "ChargeState": "BatteryPowered", "BatteryVoltage": -1, "ChargeVoltage": -1, "ChargeCurrent": -1, "PhoneCurrent": -1, "BatteryTemperature": -1, "PhoneTemperature": -1, "BatteryCapacity": -1}`
 
- - **sms2mqtt/network**: A network payload is published when it changes  
+ - **sms2mqtt/network**: A network payload is published when it changes
  E.g. `{"NetworkName": "", "State": "HomeNetwork", "PacketState": "HomeNetwork", "NetworkCode": "392 11", "CID": "74C5", "PacketCID": "74C5", "GPRS": "Attached", "PacketLAC": "8623", "LAC": "8623"}`
 
 ### heartbeat topic (enabled using HEARTBEAT flag)
- - **sms2mqtt/datetime**: A payload containing current timestamp of the GSM device is published for every loop  
+ - **sms2mqtt/datetime**: A payload containing current timestamp of the GSM device is published for every loop
  E.g. `1634671168.531913`
 
 # Troubleshoot
 ## Logs
-You need to have a look at logs using :  
+You need to have a look at logs using :
 `docker logs sms2mqtt`
 
 # Updating
@@ -125,6 +132,6 @@ docker rmi domochip/sms2mqtt
 ```
 # Ref/Thanks
 
-I want to thanks those repositories for their codes that inspired me :  
+I want to thanks those repositories for their codes that inspired me :
 * https://github.com/pajikos/sms-gammu-gateway
-* https://github.com/pkropf/mqtt2sms 
+* https://github.com/pkropf/mqtt2sms
