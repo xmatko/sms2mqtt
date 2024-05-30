@@ -37,7 +37,7 @@ def on_mqtt_message(client, userdata, msg):
             number=value
         if key.lower() == 'text':
             text=value
-
+    # TODO: NMI: Delete HTML beacons <b> </b> if any
     if 'number' not in locals() or not isinstance(number, str) or not number:
         feedback = {"result":'error : no number to send to', "payload":payload}
         client.publish(f"{mqttprefix}/sent", json.dumps(feedback, ensure_ascii=False))
@@ -98,9 +98,10 @@ def loop_sms_receive():
             logging.info('Gammu Timeout on GetNextSMS. Try again')
             continue
 
+
     if not len(allsms):
         return
-    
+
     alllinkedsms=gammu.LinkSMS(allsms)
 
     for sms in alllinkedsms:
@@ -133,8 +134,8 @@ def loop_sms_receive():
             logging.info(decodedsms)
             logging.info('================================')
             gammusm.DeleteSMS(Folder=0, Location=sms[0]['Location'])
-            
-# function used to obtain signal quality        
+
+# function used to obtain signal quality
 def get_signal_info():
     global old_signal_info
     try:
@@ -200,7 +201,7 @@ if __name__ == "__main__":
     versionnumber='1.4.6'
 
     logging.info(f'===== sms2mqtt v{versionnumber} =====')
-	
+
     # devmode is used to start container but not the code itself, then you can connect interactively and run this script by yourself
     # docker exec -it sms2mqtt /bin/sh
     if os.getenv("DEVMODE",0) == "1":
@@ -250,7 +251,7 @@ connection = at
     logging.info(f'Python-gammu runtime: v{versionTuple[1]}')
     logging.info(f'Manufacturer: {gammusm.GetManufacturer()}')
     logging.info(f'IMEI: {gammusm.GetIMEI()}')
-    logging.info(f'SIMIMSI: {gammusm.GetSIMIMSI()}')    
+    logging.info(f'SIMIMSI: {gammusm.GetSIMIMSI()}')
 
     if heartbeat:
         gammusm.SetDateTime(datetime.now())
