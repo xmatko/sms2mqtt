@@ -94,6 +94,9 @@ def loop_sms_receive():
             allsms.append(sms)
         except gammu.ERR_EMPTY as e:
             break
+        except gammu.ERR_TIMEOUT as e:
+            logging.info('Gammu Timeout on GetNextSMS. Try again')
+            continue
 
     if not len(allsms):
         return
